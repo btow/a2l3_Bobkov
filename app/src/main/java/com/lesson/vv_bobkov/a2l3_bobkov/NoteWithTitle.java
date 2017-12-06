@@ -4,7 +4,7 @@ package com.lesson.vv_bobkov.a2l3_bobkov;
  * Created by samsung on 28.11.2017.
  */
 
-class NoteWithTitle {
+class NoteWithTitle implements java.io.Serializable {
 
     private String mTitle, mAddress, mText;
 

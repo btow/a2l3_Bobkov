@@ -15,4 +15,5 @@
     <string name="cancel">Cancel</string>
     <string name="notes_no">Notes no</string>
     <string name="attantion">Attantion!!!</string>
+    <string name="file_name">note_with_title_list</string>
 </resources>
