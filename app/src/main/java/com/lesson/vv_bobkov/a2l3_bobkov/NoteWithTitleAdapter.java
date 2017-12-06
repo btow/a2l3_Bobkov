@@ -24,33 +24,41 @@ import static com.lesson.vv_bobkov.a2l3_bobkov.R.color.colorWithe;
 class NoteWithTitleAdapter extends BaseAdapter {
 
     private Context mCxt;
+    private App mApp;
     private LayoutInflater layoutInflater;
 
     @BindView(R.id.tvNotesTitle)
-    TextView tvNotesTitle;
+    private TextView tvNotesTitle;
     @BindView(R.id.llRowse)
-    LinearLayout llRowse;
+    private LinearLayout llRowse;
 
-    NoteWithTitleAdapter(Context cxt) {
+    NoteWithTitleAdapter(Context cxt, App app) {
 
         mCxt = cxt;
+        mApp = app;
         layoutInflater = (LayoutInflater) cxt.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (App.noteWithTitleListIsEmpty()) {
-            App.setNoteWithTitleList(new ArrayList<NoteWithTitle>());
-            App.addNewNoteToNoteWithTitleList(
-                    new NoteWithTitle(R.string.notes_no));
+        if (app.mNoteWithTitleListIsEmpty()) {
+
+            try {
+                app.getmFilesController().readeFromFile();
+            } catch (Exception e) {
+                app.setmNoteWithTitleList(new ArrayList<NoteWithTitle>());
+                app.addNewNoteToNoteWithTitleList(
+                        new NoteWithTitle(R.string.notes_no));
+            }
+
         }
     }
 
     @Override
     public int getCount() {
-        return App.getNoteWithTitleList().size();
+        return mApp.getmNoteWithTitleList().size();
     }
 
     @Override
     public Object getItem(int i) {
-        return App.getNoteWithTitleList().get(i);
+        return mApp.getmNoteWithTitleList().get(i);
     }
 
     @Override
@@ -68,14 +76,14 @@ class NoteWithTitleAdapter extends BaseAdapter {
 
         ButterKnife.bind(this, view);
 
-        if (App.getSelectedItems().containsKey(Integer.valueOf(i))) {
+        if (mApp.getmSelectedItems().containsKey(i)) {
             llRowse.setBackgroundColor(mCxt.getResources().getColor(colorLightGray));
             tvNotesTitle.setBackgroundColor(mCxt.getResources().getColor(colorLightGray));
         } else {
             llRowse.setBackgroundColor(mCxt.getResources().getColor(colorWithe));
             tvNotesTitle.setBackgroundColor(mCxt.getResources().getColor(colorWithe));
         }
-        tvNotesTitle.setText(App.getNoteWithTitleList().get(i).getTitle());
+        tvNotesTitle.setText(mApp.getmNoteWithTitleList().get(i).getTitle());
         tvNotesTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,29 +91,29 @@ class NoteWithTitleAdapter extends BaseAdapter {
                 if (tvNotesTitle.getText().toString().equals(mCxt.getString(R.string.notes_no))) {
                     return;
                 }
-                if (App.getSelectedItems().containsKey(Integer.valueOf(i))) {
+                if (mApp.getmSelectedItems().containsKey(i)) {
                     llRowse.setBackgroundColor(mCxt.getResources().getColor(colorWithe));
                     v.setBackgroundColor(mCxt.getResources().getColor(colorWithe));
-                    App.getSelectedItems().remove(Integer.valueOf(i));
+                    mApp.getmSelectedItems().remove(i);
                 } else {
                     llRowse.setBackgroundColor(mCxt.getResources().getColor(colorLightGray));
                     v.setBackgroundColor(mCxt.getResources().getColor(colorLightGray));
-                    App.addSelectedItem(
-                            Integer.valueOf(i), App.getNoteWithTitleList().get(i)
+                    mApp.addSelectedItem(
+                            i, mApp.getmNoteWithTitleList().get(i)
                     );
                 }
                 notifyDataSetChanged();
-                App.prepareMenu(App.getMenu());
+                mApp.prepareMenu(mApp.getmMenu());
             }
         });
         return view;
     }
 
     public void remNoteFromNoteWithTitleList(int position) {
-        App.remNoteFromNoteWithTitleList(position);
+        mApp.remNoteFromNoteWithTitleList(position);
 
-        if (App.getNoteWithTitleList().size() == 0) {
-            App.addNewNoteToNoteWithTitleList(new NoteWithTitle(R.string.notes_no));
+        if (mApp.getmNoteWithTitleList().size() == 0) {
+            mApp.addNewNoteToNoteWithTitleList(new NoteWithTitle(R.string.notes_no));
         }
         notifyDataSetChanged();
     }

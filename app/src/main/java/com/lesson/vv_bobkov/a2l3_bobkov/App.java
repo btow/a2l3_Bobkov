@@ -19,28 +19,51 @@ public class App extends Application {
             NOTES_MODE_EDIT = false;
     static boolean NOTES_MODE = false;
 
+    private static App mApp;
+    private static Menu mMenu;
+    private static FilesController mFilesController;
+
     private static ArrayList<NoteWithTitle> mNoteWithTitleList = null;
     private static HashMap<Integer, NoteWithTitle> mSelectedItems;
-    private static Menu mMenu;
-    private static App mApp;
 
-    public App() {
-        mApp = this;
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        if (mApp == null) {
+            mApp = this;
+        }
+        mFilesController = new FilesController(mApp);
     }
 
-    public static App getApp() {
+    public static App getmApp() {
         return mApp;
     }
 
-    public static void setNoteWithTitleList(ArrayList<NoteWithTitle> noteWithTitleList) {
+    public Menu getmMenu() {
+        return mMenu;
+    }
+
+    public void setmMenu(Menu menu) {
+        App.mMenu = menu;
+    }
+
+    public FilesController getmFilesController() {
+        return mFilesController;
+    }
+
+    public void setmFilesController(FilesController mFilesController) {
+        App.mFilesController = mFilesController;
+    }
+
+    public void setmNoteWithTitleList(ArrayList<NoteWithTitle> noteWithTitleList) {
         App.mNoteWithTitleList = noteWithTitleList;
     }
 
-    public static List<NoteWithTitle> getNoteWithTitleList() {
+    public List<NoteWithTitle> getmNoteWithTitleList() {
         return mNoteWithTitleList;
     }
 
-    public static boolean noteWithTitleListIsEmpty() {
+    public boolean mNoteWithTitleListIsEmpty() {
 
         if (mNoteWithTitleList == null ||
                 (mNoteWithTitleList.size() == 1 &&
@@ -50,19 +73,19 @@ public class App extends Application {
         return false;
     }
 
-    public static void addNewNoteToNoteWithTitleList(NoteWithTitle noteWithTitle) {
+    public void addNewNoteToNoteWithTitleList(NoteWithTitle noteWithTitle) {
         mNoteWithTitleList.add(noteWithTitle);
     }
 
-    public static void remNoteFromNoteWithTitleList(int position) {
+    public void remNoteFromNoteWithTitleList(int position) {
         mNoteWithTitleList.remove(position);
     }
 
-    public static void editNoteFromNoteWithTitleList(int position, NoteWithTitle noteWithTitle) {
+    public void editNoteFromNoteWithTitleList(int position, NoteWithTitle noteWithTitle) {
         mNoteWithTitleList.get(position).editNote(noteWithTitle);
     }
 
-    public static boolean selectedItemsIsEmpty() {
+    public boolean selectedItemsIsEmpty() {
 
         if (mSelectedItems == null ||
                 mSelectedItems.isEmpty()) {
@@ -71,25 +94,25 @@ public class App extends Application {
         return false;
     }
 
-    public static HashMap<Integer, NoteWithTitle> getSelectedItems() {
+    public HashMap<Integer, NoteWithTitle> getmSelectedItems() {
         return mSelectedItems;
     }
 
-    public static void createSelectedItems() {
+    public void createmSelectedItems() {
         App.mSelectedItems = new HashMap<>();
     }
 
-    public static NoteWithTitle getSelectedItem(Integer positoin) {
+    public NoteWithTitle getmSelectedItem(Integer positoin) {
         return App.mSelectedItems.get(positoin);
     }
 
-    public static void addSelectedItem(Integer positoin, NoteWithTitle noteWithTitle) {
+    public void addSelectedItem(Integer positoin, NoteWithTitle noteWithTitle) {
         App.mSelectedItems.put(positoin, noteWithTitle);
     }
 
-    public static void prepareMenu(Menu menu) {
+    public void prepareMenu(Menu menu) {
 
-        if (App.noteWithTitleListIsEmpty() || App.selectedItemsIsEmpty()) {
+        if (mApp.mNoteWithTitleListIsEmpty() || mApp.selectedItemsIsEmpty()) {
 
             for (int i = 0; i < menu.size(); i++) {
 
@@ -98,7 +121,7 @@ public class App extends Application {
                 menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                 menuItem.setVisible(false);
             }
-        } else if (App.getSelectedItems().size() > 1) {
+        } else if (mApp.getmSelectedItems().size() > 1) {
 
             for (int i = 0; i < menu.size(); i++) {
 
@@ -122,13 +145,5 @@ public class App extends Application {
                 menuItem.setVisible(true);
             }
         }
-    }
-
-    public static Menu getMenu() {
-        return mMenu;
-    }
-
-    public static void setMenu(Menu menu) {
-        App.mMenu = menu;
     }
 }

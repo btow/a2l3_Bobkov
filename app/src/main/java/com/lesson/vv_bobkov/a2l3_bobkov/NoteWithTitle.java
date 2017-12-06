@@ -15,7 +15,7 @@ class NoteWithTitle implements java.io.Serializable {
     }
 
     public NoteWithTitle(int notesNo) {
-        mTitle = App.getApp().getString(notesNo);
+        mTitle = App.getmApp().getString(notesNo);
         mAddress = "";
         mText = "";
     }

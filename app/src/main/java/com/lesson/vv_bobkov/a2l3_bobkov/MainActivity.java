@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.lvNotes)
     ListView lvNotes;
 
+    private App mApp;
     private NoteWithTitleAdapter mNoteWithTitleAdapter;
     private AbsListView.MultiChoiceModeListener mMultiChoiceModeListener
             = new AbsListView.MultiChoiceModeListener() {
@@ -38,29 +39,29 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            App.prepareMenu(menu);
+            mApp.prepareMenu(menu);
             return true;
         }
 
         @Override
         public void onItemCheckedStateChanged(ActionMode mode, int position,
                                               long id, boolean checked) {
-            if (App.noteWithTitleListIsEmpty()) {
+            if (mApp.mNoteWithTitleListIsEmpty()) {
                 return;
             }
             if (checked) {
-                App.addSelectedItem(
-                        position, App.getNoteWithTitleList().get(position)
+                mApp.addSelectedItem(
+                        position, mApp.getmNoteWithTitleList().get(position)
                 );
             } else {
-                App.getSelectedItems().remove(position);
+                mApp.getmSelectedItems().remove(position);
             }
-            App.prepareMenu(actionModeMenu);
+            mApp.prepareMenu(actionModeMenu);
         }
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            return onClickMenuItem(item);
+            return onClickMenuItem(item, mApp);
         }
 
         @Override
@@ -74,10 +75,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (App.selectedItemsIsEmpty()) App.createSelectedItems();
+        mApp = App.getmApp();
+        if (mApp.selectedItemsIsEmpty()) mApp.createmSelectedItems();
 
         ButterKnife.bind(this);
-        mNoteWithTitleAdapter = new NoteWithTitleAdapter(getApplicationContext());
+        mNoteWithTitleAdapter = new NoteWithTitleAdapter(getApplicationContext(), mApp);
         lvNotes.setAdapter(mNoteWithTitleAdapter);
         lvNotes.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
         lvNotes.setMultiChoiceModeListener(mMultiChoiceModeListener);
@@ -85,24 +87,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        App.setMenu(menu);
+        mApp.setmMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        App.prepareMenu(menu);
+        mApp.prepareMenu(menu);
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        return onClickMenuItem(item);
+        return onClickMenuItem(item, mApp);
     }
 
-    private boolean onClickMenuItem(MenuItem item) {
+    private boolean onClickMenuItem(MenuItem item, App app) {
 
         Intent intent = new Intent(this, NoteActivity.class);
 
@@ -110,11 +112,11 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.actionRem:
 
-                if (!App.selectedItemsIsEmpty()) {
+                if (!app.selectedItemsIsEmpty()) {
 
                     for (Iterator<HashMap.Entry<Integer, NoteWithTitle>> iterator =
-                            App.getSelectedItems().entrySet().iterator();
-                            iterator.hasNext();) {
+                         app.getmSelectedItems().entrySet().iterator();
+                         iterator.hasNext();) {
 
                         HashMap.Entry<Integer, NoteWithTitle> selectNote = iterator.next();
 
@@ -128,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.actionOpen:
 
-                if (!App.selectedItemsIsEmpty()) {
+                if (!app.selectedItemsIsEmpty()) {
 
-                    App.NOTES_MODE = App.NOTES_MODE_OPEN;
+                    app.NOTES_MODE = app.NOTES_MODE_OPEN;
                     startActivity(intent);
                     return true;
                 }
@@ -138,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.actionEdit:
 
-                if (!App.selectedItemsIsEmpty()) {
+                if (!app.selectedItemsIsEmpty()) {
 
-                    App.NOTES_MODE = App.NOTES_MODE_EDIT;
+                    app.NOTES_MODE = app.NOTES_MODE_EDIT;
                     startActivity(intent);
                     return true;
                 }
@@ -153,10 +155,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NoteActivity.class);
         App.NOTES_MODE = App.NOTES_MODE_EDIT;
 
-        if (App.selectedItemsIsEmpty()) {
-            App.createSelectedItems();
+        if (mApp.selectedItemsIsEmpty()) {
+            mApp.createmSelectedItems();
         } else {
-            App.getSelectedItems().clear();
+            mApp.getmSelectedItems().clear();
         }
         startActivity(intent);
     }

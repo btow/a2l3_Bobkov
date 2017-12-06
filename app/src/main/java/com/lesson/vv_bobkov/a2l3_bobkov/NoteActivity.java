@@ -19,21 +19,23 @@ import butterknife.ButterKnife;
 public class NoteActivity extends AppCompatActivity implements View.OnClickListener{
 
     @BindView(R.id.etNotesTitle)
-    EditText etNotesTitle;
+    private EditText etNotesTitle;
     @BindView(R.id.etNotesAddress)
-    EditText etNotesAddress;
+    private EditText etNotesAddress;
     @BindView(R.id.etNotesText)
-    EditText etNotesText;
+    private EditText etNotesText;
     @BindView(R.id.tvTitleOfNote)
-    TextView tvTitleOfNote;
+    private TextView tvTitleOfNote;
     @BindView(R.id.tvAddressOfNote)
-    TextView tvAddressOfNote;
+    private TextView tvAddressOfNote;
     @BindView(R.id.tvNotesText)
-    TextView tvNotesText;
+    private TextView tvNotesText;
     @BindView(R.id.btnOk)
-    Button btnOk;
+    private Button btnOk;
     @BindView(R.id.btnCancel)
-    Button btnCancel;
+    private Button btnCancel;
+
+    private App mApp = App.getmApp();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +51,10 @@ public class NoteActivity extends AppCompatActivity implements View.OnClickListe
             etNotesTitle.setVisibility(View.GONE);
             etNotesAddress.setVisibility(View.GONE);
             etNotesText.setVisibility(View.GONE);
+            btnOk.setVisibility(View.GONE);
 
             for (Map.Entry<Integer, NoteWithTitle> currentSelectedItem:
-                 App.getSelectedItems().entrySet()) {
+                 mApp.getmSelectedItems().entrySet()) {
 
                 tvTitleOfNote.setVisibility(View.VISIBLE);
                 tvTitleOfNote.setText(currentSelectedItem.getValue().getTitle());
@@ -66,10 +69,10 @@ public class NoteActivity extends AppCompatActivity implements View.OnClickListe
             }
         } else {
 
-            if (!App.selectedItemsIsEmpty()) {
-                etNotesTitle.setText(App.getSelectedItem(0).getTitle());
-                etNotesAddress.setText(App.getSelectedItem(0).getAddress());
-                etNotesText.setText(App.getSelectedItem(0).getText());
+            if (!mApp.selectedItemsIsEmpty()) {
+                etNotesTitle.setText(mApp.getmSelectedItem(0).getTitle());
+                etNotesAddress.setText(mApp.getmSelectedItem(0).getAddress());
+                etNotesText.setText(mApp.getmSelectedItem(0).getText());
             }
         }
     }
@@ -85,11 +88,11 @@ public class NoteActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (!App.NOTES_MODE) {
 
-                    if (App.noteWithTitleListIsEmpty()) App.getNoteWithTitleList().clear();
+                    if (mApp.mNoteWithTitleListIsEmpty()) mApp.getmNoteWithTitleList().clear();
 
-                    if (App.selectedItemsIsEmpty()) {
+                    if (mApp.selectedItemsIsEmpty()) {
 
-                        App.addNewNoteToNoteWithTitleList(
+                        mApp.addNewNoteToNoteWithTitleList(
                                 new NoteWithTitle(
                                         etNotesTitle.getText().toString(),
                                         etNotesAddress.getText().toString(),
@@ -99,7 +102,7 @@ public class NoteActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
 
                         for (Map.Entry<Integer, NoteWithTitle> currentSelectedItem :
-                                App.getSelectedItems().entrySet()) {
+                                mApp.getmSelectedItems().entrySet()) {
                             currentSelectedItem.getValue().setTitle(etNotesTitle.getText().toString());
                             currentSelectedItem.getValue().setAddress(etNotesAddress.getText().toString());
                             currentSelectedItem.getValue().setText(etNotesText.getText().toString());

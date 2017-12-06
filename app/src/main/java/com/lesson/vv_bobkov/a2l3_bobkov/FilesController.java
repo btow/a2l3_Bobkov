@@ -18,18 +18,24 @@ import java.util.ArrayList;
 
 public class FilesController {
 
-    private String fileName = App.getApp().getFilesDir() + App.getApp().getString(R.string.file_name);
+    private App mApp;
+    private String mFileName;
+
+    FilesController(final App app) {
+        this.mApp = app;
+        mFileName = mApp.getmApp().getFilesDir() + mApp.getmApp().getString(R.string.file_name);
+    }
 
     public void saveToFile() throws Exception {
         try {
-            File file = new File(fileName);
+            File file = new File(mFileName);
 
             if (!file.exists()) {
                 file.createNewFile();
             }
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(App.getNoteWithTitleList());
+            objectOutputStream.writeObject(mApp.getmNoteWithTitleList());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -45,9 +51,9 @@ public class FilesController {
 
     public void readeFromFile() throws Exception {
         try {
-            FileInputStream fileInputStream = new FileInputStream(fileName);
+            FileInputStream fileInputStream = new FileInputStream(mFileName);
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            App.setNoteWithTitleList((ArrayList<NoteWithTitle>) objectInputStream.readObject());
+            mApp.setmNoteWithTitleList((ArrayList<NoteWithTitle>) objectInputStream.readObject());
 
         } catch (Exception e) {
             e.printStackTrace();
