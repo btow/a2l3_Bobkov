@@ -1,8 +1,15 @@
 package com.lesson.vv_bobkov.a2l3_bobkov;
 
 import android.app.Application;
+import android.app.Dialog;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,10 +21,20 @@ import java.util.List;
 
 public class App extends Application {
 
+    /**
+     * To specify the mode for opening a note activity
+     */
     static final boolean
             NOTES_MODE_OPEN = true,
             NOTES_MODE_EDIT = false;
     static boolean NOTES_MODE = false;
+    /**
+     * To specify the opening mode of the AttentionDialog
+     */
+    static final int
+            WHITOUT_BUTTON = 0,
+            WITH_TO_RETRY = 1;
+    private boolean resultAttentionDialog = false;
 
     private static App mApp;
     private static Menu mMenu;
@@ -25,6 +42,10 @@ public class App extends Application {
 
     private static ArrayList<NoteWithTitle> mNoteWithTitleList = null;
     private static HashMap<Integer, NoteWithTitle> mSelectedItems;
+
+    public boolean isResultAttentionDialog() {
+        return resultAttentionDialog;
+    }
 
     @Override
     public void onCreate() {
@@ -145,5 +166,36 @@ public class App extends Application {
                 menuItem.setVisible(true);
             }
         }
+    }
+
+    public Dialog createAttentionDialog(final AppCompatActivity activivty,
+                                        final String msg,
+                                        final int modeDialog) {
+
+        Dialog dialog = new Dialog(activivty);
+        dialog.setTitle(R.string.attantion);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+        LinearLayout linearLayout = new LinearLayout(activivty);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        TextView textView = new TextView(activivty);
+        textView.setText(msg);
+        linearLayout.addView(textView);
+
+        switch (modeDialog) {
+            case WITH_TO_RETRY:
+                Button btnToRetry = new Button(activivty);
+                btnToRetry.setText(R.string.to_retry);
+                btnToRetry.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        resultAttentionDialog = true;
+                    }
+                });
+                linearLayout.addView(btnToRetry);
+                break;
+        }
+        dialog.setContentView(textView);
+        return dialog;
     }
 }

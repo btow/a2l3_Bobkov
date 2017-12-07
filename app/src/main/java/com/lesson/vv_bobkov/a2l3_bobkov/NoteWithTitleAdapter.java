@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 
 import static com.lesson.vv_bobkov.a2l3_bobkov.R.color.colorLightGray;
 import static com.lesson.vv_bobkov.a2l3_bobkov.R.color.colorWithe;
+import static com.lesson.vv_bobkov.a2l3_bobkov.R.color.material_blue_grey_800;
 
 /**
  * Created by samsung on 28.11.2017.
@@ -28,9 +29,9 @@ class NoteWithTitleAdapter extends BaseAdapter {
     private LayoutInflater layoutInflater;
 
     @BindView(R.id.tvNotesTitle)
-    private TextView tvNotesTitle;
+    TextView tvNotesTitle;
     @BindView(R.id.llRowse)
-    private LinearLayout llRowse;
+    LinearLayout llRowse;
 
     NoteWithTitleAdapter(Context cxt, App app) {
 
@@ -111,6 +112,16 @@ class NoteWithTitleAdapter extends BaseAdapter {
 
     public void remNoteFromNoteWithTitleList(int position) {
         mApp.remNoteFromNoteWithTitleList(position);
+
+        do {
+            try {
+                mApp.getmFilesController().saveToFile();
+            } catch (Exception e) {
+                e.printStackTrace();
+                mApp.createAttentionDialog((MainActivity) mCxt, e.getMessage(), App.WITH_TO_RETRY).show();
+            }
+        } while (mApp.isResultAttentionDialog());
+
 
         if (mApp.getmNoteWithTitleList().size() == 0) {
             mApp.addNewNoteToNoteWithTitleList(new NoteWithTitle(R.string.notes_no));

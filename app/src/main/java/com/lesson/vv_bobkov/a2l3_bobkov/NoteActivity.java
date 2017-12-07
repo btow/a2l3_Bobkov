@@ -1,6 +1,5 @@
 package com.lesson.vv_bobkov.a2l3_bobkov;
 
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,21 +18,21 @@ import butterknife.ButterKnife;
 public class NoteActivity extends AppCompatActivity implements View.OnClickListener{
 
     @BindView(R.id.etNotesTitle)
-    private EditText etNotesTitle;
+    EditText etNotesTitle;
     @BindView(R.id.etNotesAddress)
-    private EditText etNotesAddress;
+    EditText etNotesAddress;
     @BindView(R.id.etNotesText)
-    private EditText etNotesText;
+    EditText etNotesText;
     @BindView(R.id.tvTitleOfNote)
-    private TextView tvTitleOfNote;
+    TextView tvTitleOfNote;
     @BindView(R.id.tvAddressOfNote)
-    private TextView tvAddressOfNote;
+    TextView tvAddressOfNote;
     @BindView(R.id.tvNotesText)
-    private TextView tvNotesText;
+    TextView tvNotesText;
     @BindView(R.id.btnOk)
-    private Button btnOk;
+    Button btnOk;
     @BindView(R.id.btnCancel)
-    private Button btnCancel;
+    Button btnCancel;
 
     private App mApp = App.getmApp();
 
@@ -70,9 +69,13 @@ public class NoteActivity extends AppCompatActivity implements View.OnClickListe
         } else {
 
             if (!mApp.selectedItemsIsEmpty()) {
-                etNotesTitle.setText(mApp.getmSelectedItem(0).getTitle());
-                etNotesAddress.setText(mApp.getmSelectedItem(0).getAddress());
-                etNotesText.setText(mApp.getmSelectedItem(0).getText());
+                for (Map.Entry<Integer, NoteWithTitle> selectedItem :
+                        mApp.getmSelectedItems().entrySet()) {
+
+                    etNotesTitle.setText(selectedItem.getValue().getTitle());
+                    etNotesAddress.setText(selectedItem.getValue().getAddress());
+                    etNotesText.setText(selectedItem.getValue().getText());
+                }
             }
         }
     }
@@ -99,6 +102,12 @@ public class NoteActivity extends AppCompatActivity implements View.OnClickListe
                                         etNotesText.getText().toString()
                                 )
                         );
+
+                        try {
+                            mApp.getmFilesController().saveToFile();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     } else {
 
                         for (Map.Entry<Integer, NoteWithTitle> currentSelectedItem :
@@ -127,14 +136,7 @@ public class NoteActivity extends AppCompatActivity implements View.OnClickListe
         try {
             this.startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            Dialog dialog = new Dialog(this);
-            dialog.setTitle(R.string.attantion);
-            dialog.setCancelable(true);
-            dialog.setCanceledOnTouchOutside(true);
-            TextView content = new TextView(this);
-            content.setText(e.getMessage());
-            dialog.setContentView(content);
-            dialog.show();
+            mApp.createAttentionDialog(this, e.getMessage(), App.WHITOUT_BUTTON).show();
         }
     }
 }
